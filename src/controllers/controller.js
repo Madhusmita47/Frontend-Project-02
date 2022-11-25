@@ -60,6 +60,7 @@ const createCollege = async function (req, res) {
 
 ///2-----------------------createIntern-----------------------
 const createIntern = async function (req, res) {
+    res.setHeader('Access-Control-Allow-Origin','*')
     try{
         const userInput = req.body
         const { name, mobile, email, collegeName } = userInput
@@ -118,7 +119,8 @@ const createIntern = async function (req, res) {
 
 //------------------getcollegeDetails----------------------------
 const getcollegeData = async function (req, res) {
-    try {
+    res.setHeader('Access-Control-Allow-Origin','*')
+    try { 
         const input1 = req.query.collegeName  //iith
 
         if (!input1) { res.status(400).send({ status: false, message: "Please enter collegeName in queryParam" }) }
@@ -127,17 +129,19 @@ const getcollegeData = async function (req, res) {
         let collegeDetail = await collegeModel.findOne({name:input1})
         if(!collegeDetail) return res.status(400).send({status:false,msg:"college not found"})
         let id=collegeDetail._id.toString()
-        console.log(collegeDetail)
+        // console.log(collegeDetail)
         // collegeDetail.__doc
 
         //-------------Dbcall for grtting internlist from collegeId--------------
         const internList = await internModel.find({collegeId:id})
         // console.log(internList)
         let obj={}
-        obj.interns=internList
+        
         // collegeDetail.interns = internList
-        obj.name=collegeDetail.fullName
-        obj.id=collegeDetail._id
+        obj.name=collegeDetail.name
+        obj.fullName=collegeDetail.fullName
+        obj.logoLink=collegeDetail.logoLink
+        obj.interns=internList
         res.status(200).send({ status: true, data: obj })
 
         // if(!result){res.status(404).send({status:false , message:"Details not found."})}
